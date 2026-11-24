@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClearTax Qatar E-Invoicing Flows</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇶🇦</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F3EEF1; --stage:#FFFFFF; --card:#FFFFFF; --ink:#1E1320; --muted:#6A5A6C; --ghost:#E6DCE2; --line:#C8B6C1;
+  --gta:#8A1538; --doc:#E0A100; --done:#9C8C9E; --ok:#1C8A57; --ct:#5B3FD1; --off:#0E7C86; --pk:#2A1C00;
+  --display:"Archivo","Arial Black",Arial,sans-serif;
+  --body:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#120B14; --stage:#1B121F; --card:#251A2B; --ink:#F6EFF4; --muted:#B5A5B8; --ghost:#3A2B41; --line:#57435F;
+    --gta:#FF6B90; --doc:#FFC23D; --done:#8C7D96; --ok:#57E39B; --ct:#C3A6FF; --off:#4FD6E0;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#120B14; --stage:#1B121F; --card:#251A2B; --ink:#F6EFF4; --muted:#B5A5B8; --ghost:#3A2B41; --line:#57435F;
+  --gta:#FF6B90; --doc:#FFC23D; --done:#8C7D96; --ok:#57E39B; --ct:#C3A6FF; --off:#4FD6E0;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-block:18px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(24px,2.8vw,34px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.lede{color:var(--muted);margin:8px 0 0;max-width:70ch;font-size:15px}
+.flows{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end}
+.grp{display:grid;gap:6px}
+.gl{font:600 11px var(--mono);letter-spacing:.16em;color:var(--muted);padding-left:8px}
+.gl.g{color:var(--gta)} .gl.o{color:var(--off)}
+.seg{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border:1.5px solid var(--line);border-radius:14px;background:var(--stage)}
+.seg.g{border-color:color-mix(in srgb,var(--gta) 45%,transparent)} .seg.o{border-color:color-mix(in srgb,var(--off) 45%,transparent)}
+.chipbtn{font:600 14px/1 var(--body);background:transparent;color:var(--muted);border:0;padding:10px 14px;border-radius:10px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.chipbtn .k{font:600 12px var(--mono);color:var(--gta)}
+.chipbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chipbtn[aria-pressed="true"] .k{color:var(--doc)}
+.chipbtn:hover{background:var(--ghost);color:var(--ink)}
+.chipbtn[aria-pressed="true"]:hover{background:var(--ink);color:var(--bg)}
+.fs{font:600 13px var(--body);background:transparent;color:var(--muted);border:1.5px dashed var(--line);padding:9px 14px;border-radius:999px;cursor:pointer}
+button:focus-visible{outline:3px solid var(--doc);outline-offset:3px}
+
+.stage{background:var(--stage);border-radius:20px;padding:12px 16px 16px;border:1px solid var(--ghost)}
+.scroll{overflow-x:auto}
+svg{display:block;width:100%;min-width:700px;height:auto;max-height:calc(100svh - 480px);min-height:340px}
+@media (max-height:860px){.lede{display:none} svg{max-height:calc(100svh - 425px)}}
+.route{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;font:600 13px var(--mono);letter-spacing:.14em;color:var(--muted);margin:2px 0 6px;min-height:28px}
+.route b{font-weight:600;padding:5px 12px;border-radius:999px;border:1.5px solid}
+.route .rg{color:var(--gta);border-color:var(--gta)}
+.route .ro{color:var(--off);border-color:var(--off)}
+.route .rn{color:var(--ct);border-color:var(--ct)}
+.zone-gta{fill:var(--gta);fill-opacity:.06;stroke:var(--gta);stroke-opacity:.55;stroke-width:1.5;stroke-dasharray:2 6}
+.zone-off{fill:var(--off);fill-opacity:.05;stroke:var(--off);stroke-opacity:.5;stroke-width:1.5;stroke-dasharray:7 7}
+.zone-lbl{font:600 13px var(--mono);letter-spacing:.16em}
+.zl-gta{fill:var(--gta)} .zl-off{fill:var(--off)}
+.ctbox{fill:var(--ct);fill-opacity:.06;stroke:var(--ct);stroke-width:2;stroke-dasharray:10 6}
+.ctlbl{font:800 13px var(--display);letter-spacing:.2em;fill:var(--ct)}
+.node rect.box{fill:var(--card);stroke:var(--ghost);stroke-width:2;transition:stroke .3s}
+.node text{text-anchor:middle}
+.node .eb{font:600 13px var(--mono);letter-spacing:.12em;fill:var(--muted)}
+.node .nm{font:600 18px var(--body);fill:var(--ink)}
+.node{opacity:.3;transition:opacity .4s}
+.node.lit{opacity:1}
+.node.lit rect.box{stroke:var(--line)}
+.node.ct.lit rect.box{stroke:var(--ct)}
+.node.gt.lit rect.box{stroke:var(--gta)}
+.node.of.lit rect.box{stroke:var(--off)}
+.node.now rect.box,.node.ct.now rect.box,.node.gt.now rect.box,.node.of.now rect.box{stroke:var(--doc);stroke-width:3}
+#pulse{fill:none;stroke:var(--doc);stroke-width:2;opacity:0}
+#pulse.on{animation:pulse 1.4s ease-out infinite}
+@keyframes pulse{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.12)}}
+#badge{font:600 14px var(--mono);letter-spacing:.08em;opacity:0;transition:opacity .3s;paint-order:stroke;stroke:var(--stage);stroke-width:6px}
+#badge.on{opacity:1}
+#badge.ok{fill:var(--ok)} #badge.bad{fill:var(--gta)} #badge.wait{fill:var(--doc)}
+.edge path{fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.edge.seen path{opacity:1;stroke:var(--done);stroke-opacity:.75}
+.edge.g.seen path{stroke:var(--gta);stroke-opacity:.65}
+.edge.o.seen path{stroke:var(--off);stroke-opacity:.65}
+.edge.now path{opacity:1;stroke:var(--doc);stroke-width:3.5;stroke-opacity:1}
+.edge.blk path{opacity:1;stroke:var(--gta);stroke-dasharray:6 8;stroke-opacity:1}
+.mk{fill:var(--done)} .mk-now{fill:var(--doc)} .mk-blk{fill:var(--gta)} .mk-g{fill:var(--gta)} .mk-o{fill:var(--off)}
+.cross{font:800 30px var(--display);fill:var(--gta)}
+#packet{opacity:0;transition:opacity .2s}
+#packet.on{opacity:1}
+#packet rect{fill:var(--doc)}
+#packet text{font:600 13px var(--mono);fill:var(--pk);letter-spacing:.06em}
+
+.prog{display:flex;gap:6px}
+.prog i{flex:1;height:6px;border-radius:3px;background:var(--ghost);transition:background .3s}
+.prog i.on{background:var(--doc)}
+.card{background:var(--card);border-radius:20px;padding:22px 24px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:22px;align-items:center;border:1px solid var(--ghost)}
+@media (max-width:780px){.card{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 52px/1 var(--display);color:var(--doc);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
+.num small{font:600 16px var(--mono);color:var(--muted);letter-spacing:0}
+.sh{font:800 clamp(20px,2.3vw,26px)/1.15 var(--display);margin:0 0 6px;text-wrap:balance}
+.st{margin:0;font-size:clamp(15px,1.5vw,17px);max-width:72ch}
+.st code{font:500 .88em var(--mono);background:var(--ghost);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+.tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.tags:empty{display:none}
+.tag{font:600 11px var(--mono);letter-spacing:.08em;padding:3px 9px;border-radius:999px;border:1.5px solid}
+.t-st{color:var(--ok);border-color:var(--ok)}
+.t-ft{color:var(--ct);border-color:var(--ct)}
+.nav{display:flex;gap:10px;align-items:center}
+.btn{font:600 15px var(--body);border-radius:12px;padding:13px 18px;cursor:pointer;border:1.5px solid var(--line);background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.next{background:var(--doc);border-color:var(--doc);color:var(--pk);padding:15px 26px;font-size:16px}
+.btn.next:hover:not(:disabled){filter:brightness(1.06)}
+.take{border:1.5px dashed var(--line);border-radius:20px;padding:18px 22px;display:grid;gap:8px}
+.take[hidden]{display:none}
+.take h2{font:800 13px var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--gta);margin:0}
+.take p{margin:0;max-width:95ch;font-size:16px}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font:500 12px var(--mono);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:16px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:22px;height:0;border-top:3px solid}
+.sw.g{border-color:var(--gta)} .sw.o{border-color:var(--off)} .sw.now{border-color:var(--doc)} .sw.n{border-color:var(--done)} .sw.c{border-top:3px dashed var(--ct)}
+.keys{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.main,.side{display:grid;gap:14px;min-width:0}
+@media (min-width:1100px){
+  .wrap{max-width:1560px}
+  .main{grid-template-columns:minmax(0,1fr) 380px;align-items:start}
+  .card{grid-template-columns:minmax(0,1fr);gap:14px;padding:22px}
+  .side .st{font-size:17px}
+  .take p{font-size:15px}
+  svg{max-height:calc(100svh - 350px)}
+}
+@media (min-width:1100px) and (max-height:860px){svg{max-height:calc(100svh - 280px)}}
+@media (prefers-reduced-motion:reduce){.node,.prog i{transition:none}#pulse.on{animation:none;opacity:.8}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1>How Qatar e-invoicing works with ClearTax</h1>
+    <p class="lede">Connect your ERP, billing or POS to ClearTax once. We check, sign and send every invoice to Qatar’s General Tax Authority (GTA) the right way — cleared first for B2B, reported after the sale for B2C — and your tills keep working even offline. Pick a flow, then press Next.</p>
+  </div>
+  <nav class="flows" id="chips" aria-label="Flows"></nav>
+
+  <div class="main">
+  <div class="stage">
+    <div class="route" id="route" aria-live="polite"></div>
+    <div class="scroll">
+    <svg id="net" viewBox="0 0 1100 640" role="img" aria-label="">
+      <defs>
+        <marker id="m" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="mk" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="m-now" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="mk-now" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="m-blk" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="mk-blk" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="m-g" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="mk-g" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="m-o" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="mk-o" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+
+      <rect class="zone-off" x="70" y="442" width="960" height="166" rx="16"/>
+      <text class="zone-lbl zl-off" x="550" y="592" text-anchor="middle">OFFLINE · AT THE TILL, NO INTERNET</text>
+
+      <rect class="ctbox" x="420" y="214" width="260" height="144" rx="18"/>
+      <text class="ctlbl" x="550" y="204" text-anchor="middle">CLEARTAX</text>
+      <rect class="zone-gta" x="750" y="214" width="260" height="144" rx="16"/>
+      <text class="zone-lbl zl-gta" x="880" y="204" text-anchor="middle">GTA · QATAR</text>
+
+      <g class="edge" id="e-serp_ct" data-z=""><path d="M250 122 V274 H446"/></g>
+      <g class="edge" id="e-ct_serp" data-z=""><path d="M450 298 H200 V126"/></g>
+      <g class="edge g" id="e-ct_gta" data-z="g"><path d="M650 274 H776"/></g>
+      <g class="edge g" id="e-gta_ct" data-z="g"><path d="M780 298 H654"/></g>
+      <g class="edge" id="e-serp_buyer" data-z=""><path d="M340 86 H756"/></g>
+      <g class="edge o" id="e-pos_cons" data-z="o"><path d="M340 516 H756"/></g>
+      <g class="edge o" id="e-pos_ct" data-z="o"><path d="M300 480 V410 H550 V326"/></g>
+      <g id="crosses"></g>
+
+      <g class="node" id="n-serp"><rect class="box" x="100" y="50" width="240" height="72" rx="14"/><text class="eb" x="220" y="76">YOUR SYSTEM</text><text class="nm" x="220" y="104">ERP · Billing · POS</text></g>
+      <g class="node" id="n-buyer"><rect class="box" x="760" y="50" width="240" height="72" rx="14"/><text class="eb" x="880" y="76" id="buyer-eb"></text><text class="nm" x="880" y="104" id="buyer-nm"></text></g>
+      <g class="node ct" id="n-ct"><rect class="box" x="450" y="250" width="200" height="72" rx="14"/><text class="eb" x="550" y="276">CLEARTAX</text><text class="nm" x="550" y="304">E-invoicing platform</text></g>
+      <g class="node gt" id="n-gta"><rect class="box" x="780" y="250" width="200" height="72" rx="14"/><text class="eb" x="880" y="276">GTA</text><text class="nm" x="880" y="304">Qatar tax authority</text></g>
+      <g class="node of" id="n-pos"><rect class="box" x="100" y="480" width="240" height="72" rx="14"/><text class="eb" x="220" y="506">YOUR OFFLINE TILL</text><text class="nm" x="220" y="534">GTA SDK + ClearTax utility</text></g>
+      <g class="node" id="n-cons"><rect class="box" x="760" y="480" width="240" height="72" rx="14"/><text class="eb" x="880" y="506">YOUR SHOPPER</text><text class="nm" x="880" y="534">Receipt with QR</text></g>
+
+      <rect id="pulse" x="0" y="0" width="200" height="72" rx="14"/>
+      <text id="badge" x="880" y="384" text-anchor="middle"></text>
+      <g id="packet"><rect x="0" y="-14" width="60" height="28" rx="7"/><text x="0" y="5" text-anchor="middle"></text></g>
+    </svg>
+    </div>
+  </div>
+
+  <aside class="side">
+  <div class="prog" id="prog" aria-hidden="true"></div>
+  <section class="card" aria-live="polite">
+    <div class="num" id="num"></div>
+    <div>
+      <p class="sh" id="sh"></p>
+      <p class="st" id="st"></p>
+      <div class="tags" id="tags"></div>
+    </div>
+    <div class="nav">
+      <button class="btn" id="back" type="button">Back</button>
+      <button class="btn next" id="next" type="button">Next →</button>
+    </div>
+  </section>
+  <section class="take" id="take" hidden></section>
+  </aside>
+  </div>
+
+  <div class="foot">
+    <div class="legend" aria-hidden="true">
+      <span><i class="sw now"></i>Moving now</span>
+      <span><i class="sw g"></i>To or from GTA</span>
+      <span><i class="sw o"></i>From the offline till</span>
+      <span><i class="sw n"></i>Within your business or ClearTax</span>
+      <span><i class="sw c"></i>ClearTax</span>
+    </div>
+    <span class="keys"><span>→ or Space: next · ←: back · R: restart</span><button class="fs" type="button" id="fs">Full screen</button></span>
+  </div>
+</div>
+
+<script>
+const ST=l=>({c:"t-st",l:"YOU SEE · "+l});
+const FT=l=>({c:"t-ft",l:"BUILT IN · "+l});
+const ENDS={serp_ct:["serp","ct"],ct_serp:["ct","serp"],ct_gta:["ct","gta"],gta_ct:["gta","ct"],serp_buyer:["serp","buyer"],pos_cons:["pos","cons"],pos_ct:["pos","ct"]};
+const BOX={serp:[100,50,240],buyer:[760,50,240],ct:[450,250,200],gta:[780,250,200],pos:[100,480,240],cons:[760,480,240]};
+const B_ANY=["YOUR BUYER","Business or shopper"], B_B2B=["YOUR BUYER","Business customer"], B_B2C=["YOUR CUSTOMER","In store or online"];
+
+const SCEN=[
+ {id:"roles",g:0,key:"WHO",name:"Who is who",buyer:B_ANY,route:'<b class="rn">THE ROLES</b>',
+  steps:[
+   {n:"serp",h:"Your system",t:"Your ERP, billing or POS sends invoices to ClearTax through one API or an Excel upload, tagged with the device that issued them. You never have to connect to GTA yourself."},
+   {n:"ct",h:"ClearTax does the compliance work",t:"Checks every invoice against Qatar’s e-invoice rules, builds the official UBL 2.1 XML, applies the device’s digital signature, links it to the device’s previous invoice, adds the QR code and PDF/A-3, sends it to GTA the right way, retries if needed and tracks its status."},
+   {n:"gta",h:"GTA, Qatar’s tax authority",t:"Approves (clears) B2B invoices before your buyer receives them, and receives reports of B2C invoices after the sale. ClearTax connects to GTA securely, using each device’s own certificate."},
+   {n:"pos",h:"Your offline till",t:"Runs GTA’s official SDK with the ClearTax utility. It has its own certificate, so it can issue valid B2C invoices even with no internet."},
+   {n:"buyer",h:"Who receives the invoice",t:"A B2B buyer only ever receives the GTA-cleared invoice. A shopper gets a receipt with a QR code that opens GTA’s verification portal."},
+  ],
+  take:`<p>You send invoices one way. ClearTax decides how each one goes to GTA: Standard (B2B) invoices, credit notes and debit notes are cleared first; Simplified (B2C) ones are reported after the sale.</p>`},
+
+ {id:"b2b",g:1,key:"B2B",name:"Clearance",buyer:B_B2B,route:'REAL TIME · <b class="rg">CLEARED BEFORE YOUR BUYER SEES IT</b>',
+  steps:[
+   {e:"serp_ct",tok:"DATA",h:"You send the invoice",t:"Your system sends a Standard (B2B) invoice, credit note or debit note to ClearTax, with the ID of the device that issued it.",s:[ST("PROCESSING")]},
+   {n:"ct",h:"Checked against Qatar’s rules",t:"ClearTax validates the data and builds the official UBL 2.1 XML. If something is missing or wrong, you hear about it straight away, before anything goes to GTA.",s:[FT("INSTANT VALIDATION")]},
+   {n:"ct",h:"Signed and linked",t:"The invoice gets the device’s digital signature, a running invoice counter (DCV) and a fingerprint of the device’s previous invoice (PDH). Together they make the sequence tamper-proof.",s:[FT("TAMPER-PROOF CHAIN")]},
+   {e:"ct_gta",tok:"INVOICE",h:"Sent to GTA for clearance",t:"Over a secure connection using the device’s certificate. The invoice isn’t final until GTA approves it, so it isn’t shared with your buyer yet."},
+   {n:"gta",h:"GTA reviews it",t:"GTA checks the invoice against its rules and either clears or rejects it."},
+   {e:"gta_ct",tok:"CLEARED",h:"GTA clears it",t:"GTA’s response comes straight back with its stamped, cleared copy.",b:["✓ CLEARED","ok"]},
+   {n:"ct",h:"Your final invoice is ready",t:"ClearTax produces a PDF/A-3 with the cleared XML sealed inside, plus a QR code anyone can scan to verify the invoice on GTA’s portal.",s:[ST("CLEARED")]},
+   {e:"ct_serp",tok:"CLEARED",h:"Your system gets the result",t:"The status, cleared XML, QR code and PDF come back together, in the same format as for B2C invoices."},
+   {e:"serp_buyer",tok:"PDF/A-3",h:"Your buyer receives it",t:"Share the cleared invoice through your usual channel, or email it from ClearTax."},
+  ],
+  take:`<p>Your buyer only ever sees a GTA-approved invoice. If GTA is slow to respond, your system isn’t left waiting: the invoice shows as Processing and ClearTax keeps trying in the background.</p>`},
+
+ {id:"b2b-reject",g:1,key:"B2B",name:"Clearance rejected",buyer:B_B2B,route:'REAL TIME · <b class="rg">CLEARED BEFORE YOUR BUYER SEES IT</b>',
+  steps:[
+   {e:"serp_ct",tok:"DATA",h:"You send the invoice",t:"It’s validated, signed and linked as usual."},
+   {e:"ct_gta",tok:"INVOICE",h:"Sent to GTA for clearance",t:"Over the same secure connection."},
+   {e:"gta_ct",tok:"REJECTED",h:"GTA rejects it",t:"Something in the invoice doesn’t meet GTA’s rules. Resending the same data won’t help, so ClearTax doesn’t retry it automatically. If the problem is with the device certificate, the ClearTax team is alerted too.",b:["✕ NOT CLEARED","bad"],s:[ST("NOT CLEARED")]},
+   {e:"ct_serp",tok:"ERRORS",h:"You see exactly what to fix",t:"GTA’s error is translated into a clear message you can act on. Edit the invoice and send it again, or delete it.",s:[FT("CLEAR ERROR MESSAGES")]},
+   {e:"serp_buyer",tok:"INVOICE",blk:true,h:"Nothing reaches your buyer",t:"An invoice GTA hasn’t cleared can’t be shared."},
+  ],
+  take:`<p>Corrections are simple. When you resend a fixed invoice, ClearTax updates the original record instead of creating a duplicate.</p>`},
+
+ {id:"retry",g:1,key:"B2B",name:"GTA unavailable",buyer:B_B2B,route:'REAL TIME · <b class="rg">CLEARED BEFORE YOUR BUYER SEES IT</b>',
+  steps:[
+   {e:"ct_gta",tok:"INVOICE",blk:true,h:"GTA doesn’t respond",t:"A timeout, a server problem or a network issue — the kind of failure that usually clears up on its own."},
+   {n:"ct",h:"ClearTax tries again straight away",t:"Twice more, resending exactly the same signed invoice. Nothing about it changes, so the device’s invoice sequence stays intact.",s:[FT("AUTOMATIC RETRY")]},
+   {e:"ct_serp",tok:"WAITING",h:"You’re not left waiting",t:"After a short, fixed wait your system gets a response, and the invoice shows as Processing.",b:["… WAITING ON GTA","wait"],s:[ST("PROCESSING")]},
+   {n:"ct",h:"Hourly retries in the background",t:"ClearTax tries again an hour after the invoice was created, then every hour, easing off while GTA is having trouble. Later invoices from the same device queue behind it, so the order is kept."},
+   {e:"ct_gta",tok:"INVOICE",h:"Retried",t:"Before resending, ClearTax checks the invoice hasn’t already gone through. If GTA says it already has it, that counts as success, so nothing is ever submitted twice.",s:[FT("DUPLICATE PROTECTION")]},
+   {e:"gta_ct",tok:"CLEARED",h:"GTA clears it",t:"The cleared copy comes back.",b:["✓ CLEARED","ok"]},
+   {e:"ct_serp",tok:"STATUS",h:"The status updates everywhere",t:"ClearTax’s screens and your system read the same status, so they always agree.",s:[ST("CLEARED")]},
+  ],
+  take:`<p>If an invoice still hasn’t gone through after 24 hours, it’s marked Failed and you can retry it yourself at any time; a manual retry always takes priority. If one stuck invoice holds up a device’s queue, ClearTax raises an alert.</p>`},
+
+ {id:"b2c-sync",g:1,key:"B2C",name:"Reporting, real time",buyer:B_B2C,route:'REAL TIME · <b class="rg">REPORTED AFTER THE SALE</b>',
+  steps:[
+   {e:"serp_ct",tok:"DATA",h:"You send the invoice",t:"The same API as for B2B, now with a Simplified (B2C) invoice, credit note or debit note and the device ID.",s:[ST("PROCESSING")]},
+   {n:"ct",h:"Checked, signed and given a QR code",t:"Validated against Qatar’s rules, signed, linked to the device’s previous invoice, and given a QR code that opens GTA’s verification portal."},
+   {e:"ct_gta",tok:"INVOICE",h:"Reported to GTA",t:"Over the secure connection using the device’s certificate."},
+   {e:"gta_ct",tok:"ACK",h:"GTA confirms",t:"GTA accepts the report in the same exchange.",b:["✓ REPORTED","ok"],s:[ST("REPORTED")]},
+   {e:"ct_serp",tok:"REPORTED",h:"Your system gets the result",t:"Signed XML, QR code and PDF/A-3, in the same format as for B2B."},
+   {e:"serp_buyer",tok:"RECEIPT",h:"Your customer gets the receipt",t:"Scanning the QR code opens GTA’s verification portal."},
+  ],
+  take:`<p>One integration covers both B2B and B2C. In real-time mode you have GTA’s confirmation before the receipt is printed. If you’d rather not wait, use fast checkout.</p>`},
+
+ {id:"b2c-async",g:2,key:"B2C",name:"Reporting, fast checkout",buyer:B_B2C,route:'FAST CHECKOUT · <b class="rg">REPORTED AFTER THE SALE</b>',
+  steps:[
+   {e:"serp_ct",tok:"DATA",h:"You send the invoice",t:"A Simplified (B2C) invoice, credit note or debit note, with the device ID."},
+   {n:"ct",h:"Everything for the receipt, made instantly",t:"Validated, signed, linked and given its QR code straight away."},
+   {e:"ct_serp",tok:"SIGNED",h:"Your system gets it back immediately",t:"Signed XML, QR code and PDF. GTA hasn’t been contacted yet.",s:[ST("PROCESSING")]},
+   {e:"serp_buyer",tok:"RECEIPT",h:"Your customer leaves with the receipt",t:"B2C invoices are reported after the sale, so checkout never waits for GTA."},
+   {e:"ct_gta",tok:"INVOICE",h:"Reported in the background",t:"ClearTax sends it to GTA, keeping each device’s invoices in order."},
+   {e:"gta_ct",tok:"ACK",h:"GTA confirms",t:"If GTA is unavailable, the same safety net applies: two immediate retries, then hourly retries for up to 24 hours.",b:["✓ REPORTED","ok"],s:[ST("REPORTED"),FT("AUTOMATIC RETRY")]},
+   {e:"ct_serp",tok:"STATUS",h:"You see the final status",t:"In your system through the ClearTax invoice API, or on the B2C tab of Sales documents."},
+  ],
+  take:`<p>Fastest checkout, same compliance. B2B and B2C invoices are retried separately, so a delay on one side never holds up the other.</p>`},
+
+ {id:"offline",g:3,key:"B2C",name:"Offline till",buyer:B_B2C,route:'<b class="ro">ISSUED AT THE TILL</b> · <b class="rg">REPORTED WHEN BACK ONLINE</b>',
+  steps:[
+   {n:"pos",h:"A one-time device setup",t:"Each till gets a device ID from ClearTax and an OTP from the GTA portal. The ClearTax utility, shared during onboarding, then registers the till with GTA and installs its certificate. The certificate stays on the till.",s:[FT("ONE-TIME SETUP")]},
+   {n:"pos",h:"A sale with no internet",t:"GTA’s SDK creates the invoice on the till, signs it with the till’s own certificate, links it to the previous invoice and adds the QR code."},
+   {e:"pos_cons",tok:"RECEIPT",h:"Your shopper gets the receipt",t:"It’s valid immediately. The report to GTA follows once the till is back online."},
+   {e:"pos_ct",tok:"XML",h:"Back online: invoices go to ClearTax",t:"The till sends its signed invoices to ClearTax with its device ID, exactly as they were issued.",s:[ST("PROCESSING")]},
+   {n:"ct",h:"Checked, never altered",t:"ClearTax makes sure no invoice comes in twice — from the till and online — and keeps each till’s invoices in order. The signature and sequence are left untouched.",s:[FT("DUPLICATE PROTECTION")]},
+   {e:"ct_gta",tok:"XML",h:"Reported to GTA",t:"One till at a time, in the order the invoices were issued."},
+   {e:"gta_ct",tok:"ACK",h:"GTA confirms",t:"If GTA is unavailable, the same retry rules apply as for online B2C.",b:["✓ REPORTED","ok"],s:[ST("REPORTED")]},
+   {e:"ct_serp",tok:"STATUS",h:"Everything in one place",t:"Offline invoices appear on the B2C tab alongside online ones, with the same statuses."},
+  ],
+  take:`<p>Your tills keep selling when the internet drops, and every invoice still reaches GTA in the right order. If one invoice holds up a till’s queue, ClearTax raises an alert. Device certificates last about 3 months, and ClearTax alerts you before they expire.</p>`},
+];
+
+const $=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let sc=SCEN[0], idx=0, raf=null, timer=null;
+
+const GROUPS=[["START",""],["ONLINE · REAL TIME","g"],["ONLINE · FAST CHECKOUT","g"],["OFFLINE","o"]];
+const chip=s=>`<button class="chipbtn" type="button" data-id="${s.id}" aria-pressed="false"><span class="k">${s.key}</span>${s.name}</button>`;
+$("chips").innerHTML=GROUPS.map(([l,c],gi)=>`<div class="grp" role="group" aria-label="${l}"><span class="gl ${c}">${l}</span><div class="seg ${c}">${SCEN.filter(s=>s.g===gi).map(chip).join("")}</div></div>`).join("");
+$("chips").addEventListener("click",e=>{const b=e.target.closest(".chipbtn"); if(b) choose(b.dataset.id)});
+$("fs").addEventListener("click",()=>{
+  if(document.fullscreenElement){document.exitFullscreen&&document.exitFullscreen().catch(()=>{});return}
+  const d=document.documentElement; if(d.requestFullscreen){d.requestFullscreen().catch(()=>{$("fs").hidden=true})} else {$("fs").hidden=true}
+});
+document.addEventListener("fullscreenchange",()=>{$("fs").textContent=document.fullscreenElement?"Exit full screen":"Full screen"});
+
+function choose(id){
+  sc=SCEN.find(s=>s.id===id)||SCEN[0]; idx=0;
+  document.querySelectorAll(".chipbtn").forEach(b=>b.setAttribute("aria-pressed",b.dataset.id===sc.id));
+  $("buyer-eb").textContent=sc.buyer[0]; $("buyer-nm").textContent=sc.buyer[1];
+  $("route").innerHTML=sc.route||"";
+  $("prog").innerHTML=sc.steps.map(()=>"<i></i>").join("");
+  if(location.hash.slice(1)!==sc.id){try{history.replaceState(null,"","#"+sc.id)}catch(e){}}
+  draw(true);
+}
+
+function addCross(k){
+  const pp=$("e-"+k).querySelector("path"), m=pp.getPointAtLength(pp.getTotalLength()*0.5);
+  const c=document.createElementNS("http://www.w3.org/2000/svg","text");
+  c.setAttribute("class","cross"); c.setAttribute("text-anchor","middle");
+  c.setAttribute("x",m.x); c.setAttribute("y",m.y+10); c.textContent="✕"; $("crosses").appendChild(c);
+}
+
+function draw(animate){
+  cancelAnimationFrame(raf); clearTimeout(timer);
+  const st=sc.steps[idx];
+  const used={};
+  sc.steps.forEach((s,i)=>{ if(s.e && i<=idx) used[s.e]={i,s}; });
+  Object.keys(ENDS).forEach(k=>{
+    const g=$("e-"+k), p=g.querySelector("path"), z=g.dataset.z;
+    p.style.transition="none"; p.style.strokeDasharray=""; p.style.strokeDashoffset="";
+    const u=used[k]; let cls="";
+    if(u) cls = u.s.blk ? "blk" : (u.i===idx ? "now" : "seen");
+    g.classList.remove("seen","now","blk"); if(cls) g.classList.add(cls);
+    const mk = cls==="now"?"m-now":cls==="blk"?"m-blk":z==="g"?"m-g":z==="o"?"m-o":"m";
+    if(cls) p.setAttribute("marker-end",`url(#${mk})`); else p.removeAttribute("marker-end");
+  });
+  const lit=new Set(), now=new Set();
+  sc.steps.forEach((s,i)=>{ if(i>idx) return; if(s.e) ENDS[s.e].forEach(n=>lit.add(n)); if(s.n) lit.add(s.n); });
+  if(st.e) ENDS[st.e].forEach(n=>now.add(n)); if(st.n) now.add(st.n);
+  if(sc.id==="roles") sc.steps.forEach((s,i)=>{ if(i<=idx && s.n==="pos") lit.add("cons"); });
+  Object.keys(BOX).forEach(n=>{const el=$("n-"+n); el.classList.toggle("lit",lit.has(n)); el.classList.toggle("now",now.has(n));});
+  const pu=$("pulse");
+  if(st.n){ const [x,y,w]=BOX[st.n]; pu.setAttribute("x",x); pu.setAttribute("y",y); pu.setAttribute("width",w); pu.style.transformOrigin=`${x+w/2}px ${y+36}px`; pu.classList.add("on"); } else pu.classList.remove("on");
+  let bd=null; sc.steps.forEach((s,i)=>{ if(i<=idx && s.b) bd=s.b; });
+  const badge=$("badge"); badge.setAttribute("class",bd?"on "+bd[1]:""); badge.textContent=bd?bd[0]:"";
+  $("crosses").innerHTML="";
+  Object.keys(used).forEach(k=>{ if(used[k].s.blk && used[k].i<idx) addCross(k); });
+  $("num").innerHTML=`${String(idx+1).padStart(2,"0")}<small> / ${String(sc.steps.length).padStart(2,"0")}</small>`;
+  $("sh").textContent=st.h; $("st").innerHTML=st.t;
+  $("tags").innerHTML=(st.s||[]).map(x=>`<span class="tag ${x.c}">${x.l}</span>`).join("");
+  document.querySelectorAll("#prog i").forEach((b,i)=>b.classList.toggle("on",i<=idx));
+  $("back").disabled=idx===0;
+  const last=idx===sc.steps.length-1;
+  $("next").textContent=last?"Restart ↺":"Next →";
+  const tk=$("take"); tk.hidden=!last; if(last) tk.innerHTML=`<h2>Why it matters</h2>${sc.take}`;
+  $("net").setAttribute("aria-label",`Step ${idx+1} of ${sc.steps.length}: ${st.h}. ${$("st").textContent}`);
+  const pk=$("packet");
+  if(!st.e){ pk.classList.remove("on"); return; }
+  const path=$("e-"+st.e).querySelector("path"), L=path.getTotalLength();
+  const label=st.tok||""; pk.querySelector("text").textContent=label;
+  const w=Math.max(54,label.length*8.4+22), r=pk.querySelector("rect"); r.setAttribute("width",w); r.setAttribute("x",-w/2);
+  const place=f=>{const pt=path.getPointAtLength(L*f); pk.setAttribute("transform",`translate(${pt.x},${pt.y})`)};
+  const stop = st.blk ? 0.5 : 0.6;
+  if(!animate||reduce){ place(stop); pk.classList.toggle("on",!st.blk); if(st.blk) addCross(st.e); return; }
+  path.style.strokeDasharray=L; path.style.strokeDashoffset=L; path.getBoundingClientRect();
+  path.style.transition="stroke-dashoffset .75s ease-out"; path.style.strokeDashoffset="0";
+  timer=setTimeout(()=>{ path.style.transition="none"; path.style.strokeDasharray=""; path.style.strokeDashoffset=""; },800);
+  pk.classList.add("on"); const t0=performance.now(), dur=900;
+  const tick=n=>{ const k=Math.min(1,(n-t0)/dur); const e=1-Math.pow(1-k,3); place(e*stop);
+    if(k<1) raf=requestAnimationFrame(tick); else if(st.blk){ pk.classList.remove("on"); addCross(st.e); } };
+  raf=requestAnimationFrame(tick);
+}
+
+function next(){ idx = idx<sc.steps.length-1 ? idx+1 : 0; draw(true); }
+function back(){ if(idx>0){idx--;draw(false)} }
+$("next").onclick=next; $("back").onclick=back;
+document.addEventListener("keydown",e=>{
+  const t=e.target; if(t.closest&&t.closest("input,textarea"))return;
+  if(e.key==="ArrowRight"||(e.key===" "&&!(t.closest&&t.closest("button")))){e.preventDefault();next()}
+  else if(e.key==="ArrowLeft"){back()}
+  else if(e.key==="r"||e.key==="R"){idx=0;draw(true)}
+});
+const fromHash=()=>{const h=(location.hash||"").slice(1); return SCEN.some(s=>s.id===h)?h:"roles"};
+window.addEventListener("hashchange",()=>{ if(fromHash()!==sc.id) choose(fromHash()); });
+choose(fromHash());
+</script>
+</body>
+</html>
